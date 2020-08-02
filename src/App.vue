@@ -1,12 +1,43 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+    <Login v-if="!Token"/>
+    <Navigation/>
     <router-view/>
+    <SucessAlert/>
+    <ErrorAlert/>
   </div>
 </template>
+
+<script>
+import Login from "./components/Login";
+import Navigation from "./components/Navigation";
+import SucessAlert from "./components/SucessAlert";
+import ErrorAlert from "./components/ErrorAlert";
+
+export default {
+  components: {
+    Login,
+    Navigation,
+    SucessAlert,
+    ErrorAlert
+  },
+  data() {
+    return {
+      Token: null
+    }
+  },
+  mounted () {
+    this.Token = localStorage.getItem("X-Acess-Token");
+    this.$root.$on('Unauthorized',() => {
+      this.Token = null;
+    });
+    
+    this.$root.$on('Login',() => {
+      this.Token = localStorage.getItem('X-Acess-Token');
+    })
+  },
+}
+</script>
 
 <style>
 #app {
@@ -15,18 +46,5 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
 }
 </style>
