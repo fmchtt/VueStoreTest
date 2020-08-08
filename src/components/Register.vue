@@ -5,15 +5,19 @@
         <span aria-hidden="true">&times;</span>
       </button>
       <img src="../assets/logo.png" />
+      <i class="fas fa-address-card">
+        <label to="name">Nome:</label>
+      </i>
+      <input id="name" type="text" placeholder="Nome" v-model="name" />
       <i class="fas fa-envelope">
         <label to="login">E-Mail:</label>
       </i>
-      <input id="login" class="form-control" type="text" placeholder="E-Mail" v-model="email" />
+      <input id="login" type="text" placeholder="E-Mail" v-model="email" />
       <i class="fas fa-key">
         <label to="senha">Senha:</label>
       </i>
-      <input id="senha" class="form-control" type="password" placeholder="Senha" v-model="password" />
-      <button type="button" class="btn btn-primary" @click="login" value="Entrar">Entrar</button>
+      <input id="senha" type="password" placeholder="Senha" v-model="password" />
+      <button type="button" class="btn btn-primary" @click="register" value="Entrar">Entrar</button>
     </div>
   </div>
 </template>
@@ -27,33 +31,33 @@ export default {
       token: null,
       email: null,
       password: null,
+      name: null,
     };
   },
   methods: {
-    login() {
+    register() {
       http
-        .post("customers/auth", { email: this.email, password: this.password })
-        .then((response) => {
-          localStorage.setItem("X-Acess-Token", response.data.token);
-          if (response.data.roles.includes("admin")) {
-            localStorage.setItem("UserRoles", true);
-          } else {
-            localStorage.setItem("UserRoles", false);
-          }
-          localStorage.setItem("UserName", response.data.name);
-          this.$root.$emit("Login");
-          this.$root.$emit("Refresh");
+        .post("customers/", {
+          name: this.name,
+          email: this.email,
+          password: this.password,
+        })
+        .then(() => {
           this.$root.$emit("Success");
+
+          this.$root.$emit("SuccessAlert", {
+            message: "Registrado com sucesso, faça login",
+          });
         })
         .catch(() => {
           this.$root.$emit("ErrorAlert", {
-            message: "Erro!! verifique suas credenciais",
+            message: "Algo deu errado, tente novamente mais tarde!!",
           });
         });
     },
     close() {
       this.$root.$emit("Success");
-    }
+    },
   },
 };
 </script>

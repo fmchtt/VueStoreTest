@@ -13,6 +13,11 @@ Vue.use(VueRouter)
     path: '/about',
     name: 'about',
     component: () => import(/* webpackChunkName: "about" */ '../views/About')
+  },
+  {
+    path: '/product/:id',
+    name: 'Produto',
+    component: () => import(/* webpackChunkName: "products" */ '../views/SingleProduct')
   }
 ]
 

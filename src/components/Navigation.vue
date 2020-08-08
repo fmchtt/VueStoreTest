@@ -3,30 +3,53 @@
     <img src="../assets/logo.png" />
     <router-link to="/">Home</router-link>
     <router-link to="/about">About</router-link>
-    <p>Seja muito bem vindo(a) {{ name }}</p>
-    <button class="btn btn-danger" @click="logout">Sair</button>
+    <p>{{ message }}</p>
+    <button class="btn btn-success" @click="login" v-if="name == 'null'">Entrar</button>
+    <button class="btn btn-info" @click="registrar" v-if="name == 'null'">Registrar</button>
+    <button class="btn btn-danger" @click="logout" v-if="name != 'null'">Sair</button>
   </nav>
 </template>
 
 <script>
 export default {
-  data () {
+  data() {
     return {
-      name: ''
-    }
+      message: "",
+      name: null,
+    };
   },
   methods: {
     logout() {
+      localStorage.setItem("X-Acess-Token", 'null');
+      localStorage.setItem("UserName", 'null');
+      localStorage.setItem("UserRoles", 'null');
+      this.name = 'null';
+      this.$root.$emit('Refresh');
+      this.atualizaFrase();
+    },
+    login() {
       this.$root.$emit("Unauthorized");
-      localStorage.setItem("X-Acess-Token", "");
+    },
+    atualizaFrase() {
+      if (this.name == "null") {
+        this.message = "Faça login e desfrute do sistema";
+      } else {
+        this.message = "Seja bem vindo(a) " + localStorage.getItem("UserName");
+      }
+    },
+    registrar () {
+      this.$root.$emit('Register');
     },
   },
-  mounted () {
-    this.name = localStorage.getItem('UserName');
-    this.$root.$on('Refresh', () => {
-      this.name = localStorage.getItem('UserName');
-    })
-  }
+  mounted() {
+    this.name = localStorage.getItem("UserName");
+    this.atualizaFrase();
+
+    this.$root.$on("Refresh", () => {
+      this.name = localStorage.getItem("UserName");
+      this.atualizaFrase();
+    });
+  },
 };
 </script>
 
@@ -36,6 +59,7 @@ p {
   line-height: 90px;
   padding: 0 15px;
   margin: 0;
+  flex-grow: 8;
 }
 
 nav {
@@ -65,6 +89,6 @@ img {
 }
 
 button {
-  justify-self: flex-end;
+  margin: 0 10px;
 }
 </style>

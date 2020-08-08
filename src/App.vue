@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <Login v-if="!Token"/>
+    <Login v-if="Login"/>
+    <Register v-if="Register"/>
     <Navigation/>
     <router-view/>
     <SucessAlert/>
@@ -10,6 +11,7 @@
 
 <script>
 import Login from "./components/Login";
+import Register from "./components/Register";
 import Navigation from "./components/Navigation";
 import SucessAlert from "./components/SucessAlert";
 import ErrorAlert from "./components/ErrorAlert";
@@ -17,23 +19,33 @@ import ErrorAlert from "./components/ErrorAlert";
 export default {
   components: {
     Login,
+    Register,
     Navigation,
     SucessAlert,
     ErrorAlert
   },
   data() {
     return {
-      Token: null
+      Login: false,
+      Register: false,
     }
   },
   mounted () {
-    this.Token = localStorage.getItem("X-Acess-Token");
     this.$root.$on('Unauthorized',() => {
-      this.Token = null;
+      this.Login = true;
     });
     
     this.$root.$on('Login',() => {
-      this.Token = localStorage.getItem('X-Acess-Token');
+      this.Login = true;
+    })
+
+    this.$root.$on('Register',() => {
+      this.Register = true;
+    })
+
+    this.$root.$on('Success',() => {
+      this.Register = false;
+      this.Login = false;
     })
   },
 }
